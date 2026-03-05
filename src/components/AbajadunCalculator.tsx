@@ -1,9 +1,8 @@
 import { useState, useMemo, useRef } from 'react';
 import html2canvas from 'html2canvas';
-import { Trash2, RotateCcw, Download, Info, Sparkles } from 'lucide-react';
+import { Trash2, RotateCcw, Download, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
-// Data internal agar mudah disalin dan menyertakan teks Arab
 const ABAJADUN_DATA = [
   { h: 'ا', v: 1 }, { h: 'ب', v: 2 }, { h: 'ج', v: 3 }, { h: 'د', v: 4 }, { h: 'ه', v: 5 }, { h: 'و', v: 6 }, { h: 'ز', v: 7 }, { h: 'ح', v: 8 }, { h: 'ط', v: 9 },
   { h: 'ي', v: 10 }, { h: 'ك', v: 20 }, { h: 'ل', v: 30 }, { h: 'م', v: 40 }, { h: 'ن', v: 50 }, { h: 'س', v: 60 }, { h: 'ع', v: 70 }, { h: 'ف', v: 80 }, { h: 'ص', v: 90 },
@@ -33,7 +32,7 @@ const ASMAUL_HUSNA = [
   { n: "Al-Alim", a: "العليم", v: 150, m: "Maha Mengetahui" },
   { n: "Al-Qabidh", a: "القابض", v: 903, m: "Maha Menyempitkan" },
   { n: "Al-Basit", a: "الباسط", v: 72, m: "Maha Melapangkan" },
-  { n: "Al-Khafidh", a: "الخafض", v: 1481, m: "Maha Merendahkan" },
+  { n: "Al-Khafidh", a: "الخافض", v: 1481, m: "Maha Merendahkan" },
   { n: "Ar-Rafi", a: "الرافع", v: 351, m: "Maha Meninggikan" },
   { n: "Al-Muizz", a: "المعز", v: 117, m: "Maha Memuliakan" },
   { n: "Al-Mudhill", a: "المذل", v: 770, m: "Maha Menghinakan" },
@@ -92,7 +91,7 @@ const ASMAUL_HUSNA = [
   { n: "Al-Mutaali", a: "المتعالي", v: 541, m: "Maha Tinggi" },
   { n: "Al-Barr", a: "البر", v: 202, m: "Maha Dermawan" },
   { n: "At-Tawwab", a: "التواب", v: 409, m: "Maha Penerima Tobat" },
-  { n: "Al-Muntaqim", a: "المنتقم", v: 680, m: "Maha Pemberi Balasan" },
+  { n: "Al-Muntaqim", a: "المنتقm", v: 680, m: "Maha Pemberi Balasan" },
   { n: "Al-Afuww", a: "العفو", v: 156, m: "Maha Pemaaf" },
   { n: "Ar-Rauf", a: "الرؤوف", v: 286, m: "Maha Pengasuh" },
   { n: "Malikul-Mulk", a: "مالك الملك", v: 212, m: "Maha Penguasa Kerajaan" },
@@ -124,35 +123,18 @@ export default function AbajadunCalculator() {
 
   const combinations = useMemo(() => {
     if (total === 0) return [];
-
     const findCombos = (target: number, list: typeof ASMAUL_HUSNA) => {
       const res: (typeof ASMAUL_HUSNA)[] = [];
-      
-      // Single
       for (let i = 0; i < list.length; i++) {
         if (list[i].v === target) res.push([list[i]]);
       }
-      
-      // Double
       for (let i = 0; i < list.length; i++) {
         for (let j = i + 1; j < list.length; j++) {
           if (list[i].v + list[j].v === target) res.push([list[i], list[j]]);
         }
       }
-      
-      // Triple
-      for (let i = 0; i < list.length; i++) {
-        for (let j = i + 1; j < list.length; j++) {
-          for (let k = j + 1; k < list.length; k++) {
-            if (list[i].v + list[j].v + list[k].v === target) {
-              res.push([list[i], list[j], list[k]]);
-            }
-          }
-        }
-      }
       return res;
     };
-
     const result = findCombos(total, ASMAUL_HUSNA);
     return result.map(combo => [...combo].sort((a, b) => b.v - a.v)).slice(0, 3);
   }, [total]);
@@ -186,51 +168,43 @@ export default function AbajadunCalculator() {
 
   return (
     <div className="w-full">
-      <div ref={captureRef} className="p-6 bg-white">
+      <div ref={captureRef} className="p-4 sm:p-6 bg-white">
         <div className="text-center mb-6">
           <h1 className="text-sm font-bold uppercase tracking-widest text-slate-400">Kalkulator Abajadun</h1>
           <div className="h-px w-12 bg-emerald-500 mx-auto mt-2" />
         </div>
 
-        <div className="bg-slate-900 rounded-2xl p-6 text-center mb-6 shadow-inner">
-          <div className="text-3xl min-h-[40px] mb-2 font-arabic flex justify-center gap-1 flex-wrap text-emerald-400" dir="rtl">
+        <div className="bg-slate-900 rounded-2xl p-4 sm:p-6 text-center mb-6 shadow-inner">
+          <div className="text-2xl sm:text-3xl min-h-[40px] mb-2 font-arabic flex justify-center gap-1 flex-wrap text-emerald-400" dir="rtl">
             {currentInput.length > 0 ? currentInput.map((item, idx) => <span key={idx}>{item.h}</span>) : <span>...</span>}
           </div>
-          <div className="text-5xl font-bold text-white tabular-nums">{total}</div>
+          <div className="text-4xl sm:text-5xl font-bold text-white tabular-nums">{total}</div>
         </div>
 
         <div className="space-y-4">
           <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase border-b pb-2">
             <Info size={12} className="text-emerald-500" /> Kombinasi Asmaul Husna
           </div>
-          
           <div className="space-y-4">
             <AnimatePresence mode="popLayout">
               {combinations.length > 0 ? (
                 combinations.map((combo, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="bg-[#f8fafc] border-l-4 border-emerald-500 p-4 rounded-r-2xl shadow-sm"
-                  >
+                  <motion.div key={idx} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-[#f8fafc] border-l-4 border-emerald-500 p-3 sm:p-4 rounded-r-2xl shadow-sm">
                     <div className="space-y-4">
                       {combo.map((item, i) => (
                         <div key={i} className="border-b border-slate-100 last:border-0 pb-3 last:pb-0">
                           <div className="flex justify-between items-start">
                             <div className="flex items-center gap-2">
-                              <span className="text-lg font-bold text-slate-800">{item.n}</span>
-                              <span className="text-lg font-arabic text-emerald-600">{item.a}</span>
+                              <span className="text-base sm:text-lg font-bold text-slate-800">{item.n}</span>
+                              <span className="text-base sm:text-lg font-arabic text-emerald-600">{item.a}</span>
                             </div>
-                            <span className="bg-emerald-50 text-emerald-600 px-2 py-1 rounded-lg font-mono font-bold text-sm">
-                              {item.v}
-                            </span>
+                            <span className="bg-emerald-50 text-emerald-600 px-2 py-1 rounded-lg font-mono font-bold text-xs sm:text-sm">{item.v}</span>
                           </div>
-                          <p className="text-xs italic text-slate-400 mt-1">{item.m}</p>
+                          <p className="text-[10px] sm:text-xs italic text-slate-400 mt-1">{item.m}</p>
                         </div>
                       ))}
                     </div>
-                    <div className="mt-4 pt-2 border-t border-dashed border-slate-200 text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider">
+                    <div className="mt-4 pt-2 border-t border-dashed border-slate-200 text-[9px] sm:text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider">
                       HISAB: {combo.map(x => x.v).join(' + ')} = {total}
                     </div>
                   </motion.div>
@@ -245,12 +219,12 @@ export default function AbajadunCalculator() {
         </div>
       </div>
 
-      <div className="p-6 bg-slate-50 border-t">
-        <div className="grid grid-cols-4 gap-2 mb-6" dir="rtl">
+      <div className="p-4 sm:p-6 bg-slate-50 border-t">
+        <div className="grid grid-cols-4 gap-1.5 sm:gap-2 mb-6" dir="rtl">
           {ABAJADUN_DATA.map((item, idx) => (
-            <button key={idx} onClick={() => handleAddChar(item)} className="bg-white border border-slate-200 p-3 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition-all shadow-sm active:scale-95">
-              <span className="text-2xl font-bold text-slate-800">{item.h}</span>
-              <span className="block text-[10px] text-slate-400 font-mono">{item.v}</span>
+            <button key={idx} onClick={() => handleAddChar(item)} className="bg-white border border-slate-200 p-2 sm:p-3 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition-all shadow-sm active:scale-95">
+              <span className="text-xl sm:text-2xl font-bold text-slate-800">{item.h}</span>
+              <span className="block text-[9px] sm:text-[10px] text-slate-400 font-mono">{item.v}</span>
             </button>
           ))}
         </div>
